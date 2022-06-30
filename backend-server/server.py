@@ -36,6 +36,20 @@ class S(BaseHTTPRequestHandler):
         self._set_response()
         self.wfile.write("GET request for {}".format(self.path).encode('utf-8'))
 
+
+
+
+    def handleGetMusic(self,data):
+        global count
+        length=len(musicalData['data1.txt'])
+        data['Instruction']=musicalData['data1.txt'][count%length]
+        count+=1
+        return
+
+    def handleRegistId(self,data):
+        print(data['userId'])
+        return
+
     def do_POST(self):
         content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
         post_data = self.rfile.read(content_length) # <--- Gets the data itself
@@ -48,15 +62,13 @@ class S(BaseHTTPRequestHandler):
         #============modify here to handle the post event=========================
         b=json.loads(data)
 
-        b['userId']=b['userId']+'response'
+        #b['userId']=b['userId']+'response'
         self._set_response()
-        b['Instruction']=musicalData['data1.txt']
-        length=len(b['Instruction'])
-        global count
-        b['Instruction']=b['Instruction'][count%length]
-        count+=1
-        print('b',b)
-        print('===')
+        print('===',self.path)
+        if self.path == '/getMusic':
+            self.handleGetMusic(b)
+        elif self.path =='/registId':
+            self.handleRegistId(b)
         #============end of block=========================
         self.wfile.write( json.dumps(b).encode('utf-8'))
 

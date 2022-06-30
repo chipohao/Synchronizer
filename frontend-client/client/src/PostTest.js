@@ -6,7 +6,7 @@ export default () => {
   const [Id, setTitle] = useState("");
   const [seconds, setSeconds] = useState(0);
   const currentCount = seconds;
-  const synth = new Tone.Synth().toMaster();
+  const synth = new Tone.Synth().toDestination();
 
   //just demo, define your own mapping here
   var noteMapping = {
@@ -16,6 +16,16 @@ export default () => {
     4: "F3",
     5: "G3",
   };
+
+  const processInstruction = (data) => {
+    console.log(data);
+    if (data["Instruction"] in noteMapping) {
+      console.log(data["Instruction"]);
+      synth.triggerAttackRelease(noteMapping[data["Instruction"]], "4n");
+      //synth.triggerAttackRelease("C4", "4n");
+    }
+  };
+
   const startTimer = async () => {
     setInterval(async () => {
       setSeconds((seconds) => seconds + 1);
@@ -23,18 +33,16 @@ export default () => {
       const r = await axios.post(`http://127.0.0.1:8080/getMusic`, {
         userId: Id,
       });
-      if (r.data["Instruction"] in noteMapping) {
-        //just demo, define your own behavior here
-        synth.triggerAttackRelease(noteMapping[r.data["Instruction"]], "4n");
-      }
-      console.log(r.data);
+      processInstruction(r.data);
+
+      //console.log(r.data);
     }, 1000);
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     //no function implement in /getMusicNow, every client share same behavior
-    const r = await axios.post(`http://127.0.0.1:8080/RegistId`, {
+    const r = await axios.post(`http://127.0.0.1:8080/registId`, {
       userId: Id,
     });
     //setTitle(Id);

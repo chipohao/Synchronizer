@@ -1,20 +1,23 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+#this lib is not appropiate for production, it should be replace to other library
 import logging
 import os
 import json
 #global variable for prototype, should be replaced in release version.
 
+
+#============modify here to handle the database=========================
 musicalData={}
 count=0
 def on_server_running():
-    ls=os.listdir('./data') #read all files in data folder, not safe method, should use database
+    ls=os.listdir('./data') #read all files in data folder, not a safe and stable method, should use database in the release version
     for filename in ls:
         f = open('./data/{}'.format(filename), 'r')
         s=f.read()
         musicalData[filename]=s.split(' ')
         print(s)
         f.close()
-
+#============endofblock=========================
 
 
 class S(BaseHTTPRequestHandler):
@@ -39,6 +42,10 @@ class S(BaseHTTPRequestHandler):
         logging.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
                 str(self.path), str(self.headers), post_data.decode('utf-8'))
         data= post_data.decode('utf-8')
+        
+
+
+        #============modify here to handle the post event=========================
         b=json.loads(data)
 
         b['userId']=b['userId']+'response'
@@ -50,7 +57,9 @@ class S(BaseHTTPRequestHandler):
         count+=1
         print('b',b)
         print('===')
+        #============end of block=========================
         self.wfile.write( json.dumps(b).encode('utf-8'))
+
 
     def do_OPTIONS(self):
         self.send_response(200, "ok")

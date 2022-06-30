@@ -1,12 +1,13 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-#this lib is not appropiate for production, it should be replace to other library
+#this lib is not appropiate for production, it should be replace by another library
 import logging
 import os
 import json
-#global variable for prototype, should be replaced in release version.
+
 
 
 #============modify here to handle the database=========================
+#global variable for prototype, should be replaced in the release version.
 musicalData={}
 count=0
 def on_server_running():

@@ -29,7 +29,7 @@ export default () => {
   const startTimer = async () => {
     setInterval(async () => {
       setSeconds((seconds) => seconds + 1);
-      //no function implement in /getMusicNow, every client share same behavior
+      //no function implemented in /getMusicNow yet, every client shares the same behavior
       const r = await axios.post(`http://127.0.0.1:8080/getMusic`, {
         userId: Id,
       });
@@ -41,12 +41,14 @@ export default () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    //no function implement in /getMusicNow, every client share same behavior
+    //no function implemented in /getMusicNow yet, every client shares the same behavior
     const r = await axios.post(`http://127.0.0.1:8080/registId`, {
       userId: Id,
     });
     //setTitle(Id);
-    startTimer();
+    if ("success" in r.data) {
+      startTimer();
+    }
     console.log(r.data);
   };
 

@@ -1,14 +1,15 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-#this lib is not appropiate for production, it should be replace by another library
+#this lib is not appropiate for production, it should be replaced by another library
 import logging
 import os
 import json
-
+import random
 
 
 #============modify here to handle the database=========================
 #global variable for prototype, should be replaced in the release version.
 musicalData={}
+devicePool={}
 count=0
 def on_server_running():
     ls=os.listdir('./data') #read all files in data folder, not a safe and stable method, should use database in the release version
@@ -41,14 +42,28 @@ class S(BaseHTTPRequestHandler):
 
 
     def handleGetMusic(self,data):
-        global count
-        length=len(musicalData['data1.txt'])
-        data['Instruction']=musicalData['data1.txt'][count%length]
-        count+=1
+        
+        userId=data['userId']
+        print(devicePool)
+        user=devicePool[userId]
+        print(user)
+        length=len(user['data'])
+
+        data['Instruction']=user['data'][user['count']%length]
+        user['count']+=1
         return
 
     def handleRegistId(self,data):
-        print(data['userId'])
+        print('register',data['userId'])
+        userId=data['userId']
+        devicePool[userId]={}
+        keys=list(musicalData.keys())
+        l=len(keys)
+        rand=random.randint(0,l-1)
+        devicePool[userId]['data']=musicalData[keys[rand]]
+        devicePool[userId]['count']=0
+        data['success']=1
+
         return
 
     def do_POST(self):
